@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>SinapiRevit</Name>
+    <Assembly>SinapiRevit.dll</Assembly>
+    <FullClassName>SinapiRevit.Aplicativo</FullClassName>
+    <ClientId>c0e40daf-0bd9-4d58-843d-1c91f4fec28b</ClientId>
+    <VendorId>augustogoncalves/com.github.</VendorId>
+    <VendorDescription>Augusto Goncalves, http://github.com/augustogoncalves </VendorDescription>
+  </AddIn>
+</RevitAddIns>
