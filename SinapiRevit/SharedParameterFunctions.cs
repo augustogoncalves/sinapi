@@ -82,7 +82,7 @@ namespace SinapiRevit
             Definition paramSmallOpeningDef = sharedParamDefGroup.Definitions.get_Item(paramName);
             if (paramSmallOpeningDef == null)
             {
-                ExternalDefinitionCreationOptions options = new ExternalDefinitionCreationOptions(paramName, ParameterType.Number);
+                ExternalDefinitionCreationOptions options = new ExternalDefinitionCreationOptions(paramName, ParameterType.Text);
                 paramSmallOpeningDef = sharedParamDefGroup.Definitions.Create(options);
             }
 

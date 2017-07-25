@@ -49,8 +49,18 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AplicarSinapi.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AplicarSinapi.Designer.cs">
+      <DependentUpon>AplicarSinapi.cs</DependentUpon>
+    </Compile>
     <Compile Include="App.cs" />
     <Compile Include="Commandos.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -58,6 +68,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="SinapiRevit.addin" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="AplicarSinapi.resx">
+      <DependentUpon>AplicarSinapi.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

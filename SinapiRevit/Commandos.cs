@@ -57,7 +57,7 @@ namespace SinapiRevit
         public static CategoriaSuportada[] CategoriasSuportadas()
         {
             return new CategoriaSuportada[] {
-                new CategoriaSuportada(typeof(WallType), typeof(Wall), BuiltInCategory.OST_Walls, Unidade.Area),
+                //new CategoriaSuportada(typeof(WallType), typeof(Wall), BuiltInCategory.OST_Walls, Unidade.Area),
                 new CategoriaSuportada(typeof(FamilySymbol), typeof(FamilyInstance), BuiltInCategory.OST_Doors, Unidade.Quantidade),
                 new CategoriaSuportada(typeof(FamilySymbol), typeof(FamilyInstance), BuiltInCategory.OST_Windows, Unidade.Quantidade)
             };
@@ -84,9 +84,64 @@ namespace SinapiRevit
     [Transaction(TransactionMode.Manual)]
     public class CmdAtribuirParametros : IExternalCommand
     {
+        Document _document;
+
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
+            AplicarSinapi form = new AplicarSinapi();
+            form.ElementoSelecionado += Form_ElementoSelecionado;
+
+            _document = commandData.Application.ActiveUIDocument.Document;
+
+            foreach (Config.CategoriaSuportada categoria in Config.CategoriasSuportadas())
+            {
+                System.Windows.Forms.TreeNode treeNodeCategoria = null;
+
+                FilteredElementCollector tipos = new FilteredElementCollector(_document);
+                tipos.OfCategory(categoria.Categoria);
+                tipos.OfClass(categoria.Tipo);
+
+                foreach (FamilySymbol tipo in tipos)
+                {
+                    FilteredElementCollector instancias = new FilteredElementCollector(_document);
+                    instancias.OfCategory(categoria.Categoria);
+                    instancias.OfClass(categoria.Instancia);
+                    instancias.WherePasses(new FamilyInstanceFilter(_document, tipo.Id));
+
+                    foreach (Element instancia in instancias)
+                    {
+                        if (instancia.GetParameters("SINAPI").Count != 1) continue;
+
+                        if (treeNodeCategoria == null)
+                        {
+                            treeNodeCategoria = new System.Windows.Forms.TreeNode();
+                            treeNodeCategoria.Text = tipo.FamilyName;
+                            treeNodeCategoria.Tag = tipo.Id.IntegerValue.ToString();
+                        }
+
+                        System.Windows.Forms.TreeNode treeNodeInstancia = new System.Windows.Forms.TreeNode(instancia.Name);
+                        treeNodeInstancia.Tag = instancia.Id.IntegerValue.ToString();
+                        treeNodeCategoria.Nodes.Add(treeNodeInstancia);
+                    }
+                }
+
+                if (treeNodeCategoria != null)
+                    form.Tree.Add(treeNodeCategoria);
+            }
+
+            Transaction trans = new Transaction(_document);
+            trans.Start("Aplicando SINAPI");
+            form.ShowDialog();
+            trans.Commit();
+
             return Result.Succeeded;
+        }
+
+        private void Form_ElementoSelecionado(int elementId, string sinapi)
+        {
+            ElementId id = new ElementId(elementId);
+            Parameter param = _document.GetElement(id).GetParameters("SINAPI")[0];
+            param.Set(sinapi);
         }
     }
 
@@ -102,19 +157,19 @@ namespace SinapiRevit
             foreach (Config.CategoriaSuportada categoria in Config.CategoriasSuportadas())
                 naoEspecificados.AddRange(BuscarItems(items, doc, categoria.Instancia, categoria.Categoria, categoria.Unidade));
 
+            // ToDo:
+            // gerar CSV da variável ITEMS
+
             return Result.Succeeded;
         }
 
         private List<ElementId> BuscarItems(Dictionary<string, double> items, Document doc, Type typeInstancias, BuiltInCategory categoria, Config.Unidade unidade)
         {
-     
-
             List<ElementId> naoEspecificados = new List<ElementId>();
 
-                FilteredElementCollector instancias = new FilteredElementCollector(doc);
-                instancias.OfCategory(categoria);
-                instancias.OfClass(typeInstancias);
-
+            FilteredElementCollector instancias = new FilteredElementCollector(doc);
+            instancias.OfCategory(categoria);
+            instancias.OfClass(typeInstancias);
 
             foreach (Element instancia in instancias)
             {
