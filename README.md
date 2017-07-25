@@ -5,7 +5,7 @@ Este exemplo utiliza o template de [Visual Studio para Revit 2018](http://thebui
 ### Comandos
 
 - **Aplicar parametro SINAPI**: neste comando é criado o _Shared Parameter_ com nome **SINAPI** nas categorias suportadas, neste caso: Walls, Doors, Windows.
-- **Atribuir valores**: ToDo listar elementos e facilitar a atribuição do valor SINAPI para os elementos
+- **Atribuir valores**: lista elementos e realiza a atribuição do valor SINAPI para os elementos
 - **Exportar**: ler elementos do modelo com o parametro SINAPI e exporta para .csv
 
 ### Requisitos
